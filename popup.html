@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NoScroll Shorts - 最強ドパガキ対策</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <div class="container">
+    <!-- Header -->
+    <header class="header">
+      <div class="logo-area">
+        <img src="icons/icon48.png" alt="Logo" class="logo-img">
+        <div class="logo-text">
+          <h1>NoScroll Shorts</h1>
+          <p class="subtitle">最強ドパガキ対策シールド</p>
+        </div>
+      </div>
+      <div class="status-badge" id="globalStatus">稼働中</div>
+    </header>
+
+    <!-- Master Switch: スクロール禁止 ON/OFF -->
+    <section class="master-switch-section">
+      <label class="master-card" for="blockScroll">
+        <div class="master-info">
+          <span class="master-icon">🛡️</span>
+          <div>
+            <div class="master-title" id="masterStatusText">スクロール禁止: 有効</div>
+            <div class="master-subtitle">ホイール・矢印キー・次へボタンをブロック</div>
+          </div>
+        </div>
+        <div class="switch master-switch">
+          <input type="checkbox" id="blockScroll" checked>
+          <span class="slider"></span>
+        </div>
+      </label>
+    </section>
+
+    <!-- Stats Dashboard -->
+    <section class="stats-panel">
+      <div class="stat-card">
+        <div class="stat-icon">🛡️</div>
+        <div class="stat-info">
+          <div class="stat-value" id="blockedCount">0</div>
+          <div class="stat-label">阻止したスクロール</div>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon">🧠</div>
+        <div class="stat-info">
+          <div class="stat-value" id="savedMinutes">0分</div>
+          <div class="stat-label">防衛した集中時間</div>
+        </div>
+      </div>
+      <button type="button" class="reset-stats-btn" id="resetStatsBtn" title="統計をリセット">リセット</button>
+    </section>
+
+    <!-- Detailed Settings -->
+    <section class="settings-group">
+      <h2 class="group-title">防衛＆脱出設定</h2>
+
+      <!-- Toggle: 下の項目消滅 -->
+      <label class="toggle-card" for="hideNextItems">
+        <div class="toggle-info">
+          <span class="toggle-name">下の項目（次の動画）完全消滅</span>
+          <span class="toggle-desc">次の動画の先行ロードや下部のチラ見えを排除</span>
+        </div>
+        <div class="switch">
+          <input type="checkbox" id="hideNextItems" checked>
+          <span class="slider"></span>
+        </div>
+      </label>
+
+      <!-- Toggle: Watchビューへ行くボタン -->
+      <label class="toggle-card" for="showWatchButton">
+        <div class="toggle-info">
+          <span class="toggle-name">画面右上にWatch遷移ボタンを表示</span>
+          <span class="toggle-desc">「🎬 通常プレーヤーで見る ↗」ボタンを表示</span>
+        </div>
+        <div class="switch">
+          <input type="checkbox" id="showWatchButton" checked>
+          <span class="slider"></span>
+        </div>
+      </label>
+
+      <!-- 脱出先URL設定 (Googleトップ等 / 変更可) -->
+      <div class="input-card">
+        <div class="toggle-info">
+          <span class="toggle-name">脱出先URL (Googleトップ等・変更可)</span>
+          <span class="toggle-desc">視聴後ポップアップに表示される脱出リンク先</span>
+        </div>
+        <div class="input-wrapper">
+          <input type="url" id="escapeUrl" class="custom-input" placeholder="https://www.google.com" value="https://www.google.com">
+        </div>
+      </div>
+
+      <!-- Toggle: ループ停止 -->
+      <label class="toggle-card" for="stopOnEnd">
+        <div class="toggle-info">
+          <span class="toggle-name">1本見たら自動停止 (ループ殺し)</span>
+          <span class="toggle-desc">再生終了時に自動停止して脱出ポップアップを表示</span>
+        </div>
+        <div class="switch">
+          <input type="checkbox" id="stopOnEnd">
+          <span class="slider"></span>
+        </div>
+      </label>
+
+      <!-- Toggle: Shorts棚非表示 -->
+      <label class="toggle-card" for="hideShortsFeed">
+        <div class="toggle-info">
+          <span class="toggle-name">YouTube全体からShortsを消滅</span>
+          <span class="toggle-desc">ホーム画面・サイドバー・検索結果のShorts棚を全非表示</span>
+        </div>
+        <div class="switch">
+          <input type="checkbox" id="hideShortsFeed">
+          <span class="slider"></span>
+        </div>
+      </label>
+
+      <!-- Toggle: 通常プレーヤー転送 -->
+      <label class="toggle-card" for="redirectToWatch">
+        <div class="toggle-info">
+          <span class="toggle-name">常時通常プレーヤー転送 (/watchへ強制)</span>
+          <span class="toggle-desc">Shortsの縦スワイプUIを開かず常に通常画面で再生</span>
+        </div>
+        <div class="switch">
+          <input type="checkbox" id="redirectToWatch">
+          <span class="slider"></span>
+        </div>
+      </label>
+
+      <!-- Timer Select -->
+      <div class="select-card">
+        <div class="toggle-info">
+          <span class="toggle-name">ドパガキ警告タイマー</span>
+          <span class="toggle-desc">滞在時間が経過すると脱出ポップアップを表示</span>
+        </div>
+        <select id="timerMinutes" class="custom-select">
+          <option value="0">無効 (制限なし)</option>
+          <option value="1">1分 (即座に脱出)</option>
+          <option value="3">3分 (おすすめ)</option>
+          <option value="5">5分</option>
+          <option value="10">10分</option>
+        </select>
+      </div>
+
+      <!-- Toggle: トースト通知 -->
+      <label class="toggle-card" for="showToast">
+        <div class="toggle-info">
+          <span class="toggle-name">スクロール阻止時の画面通知</span>
+          <span class="toggle-desc">無意識にスクロールした際、右上に遮断トーストを表示</span>
+        </div>
+        <div class="switch">
+          <input type="checkbox" id="showToast" checked>
+          <span class="slider"></span>
+        </div>
+      </label>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+      <span class="footer-note">⚡ Watchビューでは一切干渉せず通常通り動作します</span>
+      <span class="version">v1.3.0</span>
+    </footer>
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+</html>
