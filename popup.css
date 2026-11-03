@@ -129,7 +129,10 @@ body {
 }
 
 .master-icon {
-  font-size: 26px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #ff2d55;
 }
 
 .master-title {
@@ -177,7 +180,10 @@ body {
 }
 
 .stat-icon {
-  font-size: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--accent-cyan);
 }
 
 .stat-value {
@@ -381,9 +387,22 @@ input:checked + .slider:before {
 
 .footer-note {
   color: #a0a0b0;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
 }
 
 .version {
   font-weight: 600;
   color: var(--accent-pink);
+}
+
+/* SVG Helper Classes */
+.icon-svg {
+  display: block;
+}
+
+.icon-svg-inline {
+  display: inline-block;
+  vertical-align: -1px;
 }

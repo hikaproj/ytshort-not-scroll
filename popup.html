@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>NoScroll Shorts - 最強ドパガキ対策</title>
+  <title>NoScroll Shorts</title>
   <link rel="stylesheet" href="popup.css">
 </head>
 <body>
@@ -14,7 +14,7 @@
         <img src="icons/icon48.png" alt="Logo" class="logo-img">
         <div class="logo-text">
           <h1>NoScroll Shorts</h1>
-          <p class="subtitle">最強ドパガキ対策シールド</p>
+          <p class="subtitle">Dopamine Shield for YouTube</p>
         </div>
       </div>
       <div class="status-badge" id="globalStatus">稼働中</div>
@@ -24,7 +24,9 @@
     <section class="master-switch-section">
       <label class="master-card" for="blockScroll">
         <div class="master-info">
-          <span class="master-icon">🛡️</span>
+          <span class="master-icon">
+            <svg class="icon-svg" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/></svg>
+          </span>
           <div>
             <div class="master-title" id="masterStatusText">スクロール禁止: 有効</div>
             <div class="master-subtitle">ホイール・矢印キー・次へボタンをブロック</div>
@@ -40,14 +42,18 @@
     <!-- Stats Dashboard -->
     <section class="stats-panel">
       <div class="stat-card">
-        <div class="stat-icon">🛡️</div>
+        <div class="stat-icon">
+          <svg class="icon-svg" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/></svg>
+        </div>
         <div class="stat-info">
           <div class="stat-value" id="blockedCount">0</div>
           <div class="stat-label">阻止したスクロール</div>
         </div>
       </div>
       <div class="stat-card">
-        <div class="stat-icon">🧠</div>
+        <div class="stat-icon">
+          <svg class="icon-svg" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+        </div>
         <div class="stat-info">
           <div class="stat-value" id="savedMinutes">0分</div>
           <div class="stat-label">防衛した集中時間</div>
@@ -76,7 +82,7 @@
       <label class="toggle-card" for="showWatchButton">
         <div class="toggle-info">
           <span class="toggle-name">画面右上にWatch遷移ボタンを表示</span>
-          <span class="toggle-desc">「🎬 通常プレーヤーで見る ↗」ボタンを表示</span>
+          <span class="toggle-desc">通常動画プレーヤーで開くボタンを画面上に配置</span>
         </div>
         <div class="switch">
           <input type="checkbox" id="showWatchButton" checked>
@@ -161,7 +167,10 @@
 
     <!-- Footer -->
     <footer class="footer">
-      <span class="footer-note">⚡ Watchビューでは一切干渉せず通常通り動作します</span>
+      <span class="footer-note">
+        <svg class="icon-svg-inline" xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg>
+        Watchビューでは一切干渉せず通常通り動作します
+      </span>
       <span class="version">v1.3.0</span>
     </footer>
   </div>

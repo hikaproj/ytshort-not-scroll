@@ -1,8 +1,21 @@
 // NoScroll Shorts - Content Script
-// 最強のドパガキ対策 ＆ YouTube Shorts スクロール・下ボタン・次動画完全封殺
+// YouTube Shorts scroll blocker and dopamine detox Chrome extension
 
 (function () {
   'use strict';
+
+  // OSS Lucide Icons (MIT License) - Clean SVG Definitions
+  const ICONS = {
+    shield: '<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-shield"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/></svg>',
+    tv: '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-tv"><rect width="20" height="15" x="2" y="7" rx="2" ry="2"/><polyline points="17 2 12 7 7 2"/></svg>',
+    externalLink: '<svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-external-link"><path d="M15 3h6v6"/><path d="10 14 21 3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></svg>',
+    globe: '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-globe"><circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/><path d="M2 12h20"/></svg>',
+    home: '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-home"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>',
+    rotateCcw: '<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-rotate-ccw"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>',
+    alertTriangle: '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-alert-triangle"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>',
+    clock: '<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-clock"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>',
+    checkCircle: '<svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-check-circle"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>'
+  };
 
   // デフォルト設定
   const defaultSettings = {
@@ -15,7 +28,7 @@
     stopOnEnd: false,        // 1本見たら自動一時停止 (ループ防止)
     timerMinutes: 0,         // ドパガキタイマー (0: 無効)
     showToast: true,         // ブロック通知トースト
-    escapeUrl: 'https://www.google.com', // ★視聴後ポップアップの脱出URL (変更可)
+    escapeUrl: 'https://www.google.com', // 視聴後ポップアップの脱出URL (変更可)
     stats: {
       blockedCount: 0,
       savedSeconds: 0
@@ -54,7 +67,7 @@
     const root = document.documentElement;
     if (!root) return;
 
-    // ★重要: watchビューでは一切の属性を付与しない (完全にネイティブ動作)
+    // Note: watchビューでは一切の属性を付与しない (完全にネイティブ動作)
     if (isWatchPage()) {
       root.removeAttribute('data-block-scroll');
       root.removeAttribute('data-hide-down-button');
@@ -108,7 +121,7 @@
   }
 
   // ---------------------------------------------------------
-  // ★画面上のWatch遷移ボタン (通常プレーヤーで見る)
+  // 画面上のWatch遷移ボタン (通常プレーヤーで見る)
   // ---------------------------------------------------------
   function updateWatchButton() {
     // watchビューやShorts以外、または設定でOFFの場合は即座に削除
@@ -135,9 +148,9 @@
     }
 
     watchBtnElement.innerHTML = `
-      <span class="btn-icon">🎬</span>
+      <span class="btn-icon">${ICONS.tv}</span>
       <span>通常プレーヤー(Watch)で見る</span>
-      <span class="btn-arrow">↗</span>
+      <span class="btn-arrow">${ICONS.externalLink}</span>
     `;
   }
 
@@ -176,8 +189,8 @@
     }
 
     toastElement.innerHTML = `
-      <span class="toast-icon">🛡️</span>
-      <span>スクロールを阻止しました！</span>
+      <span class="toast-icon">${ICONS.shield}</span>
+      <span>スクロールを阻止しました</span>
       <span class="toast-count">#${blockedSessionCount}</span>
     `;
 
@@ -217,7 +230,7 @@
 
   // ---------------------------------------------------------
   // 鉄壁のイベント遮断 (スクロール・ホイール・キーボード・タッチ)
-  // ★重要: isShortsPage() かつ ポップアップ設定の blockScroll が ON のときのみ発動
+  // Note: isShortsPage() かつ ポップアップ設定の blockScroll が ON のときのみ発動
   // ---------------------------------------------------------
 
   // 1. ホイール (マウスホイール / トラックパッド)
@@ -369,25 +382,26 @@
       <div class="noscroll-modal-actions">
         <!-- 1. Googleトップ (変更可) -->
         <a href="${escapeUrl}" class="noscroll-btn-escape">
-          <span class="btn-icon">🌐</span>
+          <span class="btn-icon">${ICONS.globe}</span>
           <span>${escapeLabel}</span>
         </a>
 
         <!-- 2. YouTubeトップ -->
         <a href="https://www.youtube.com/" class="noscroll-btn-yt">
-          <span class="btn-icon">🏠</span>
+          <span class="btn-icon">${ICONS.home}</span>
           <span>YouTubeトップ</span>
         </a>
 
         <!-- 3. watchビュー -->
         <a href="${watchUrl}" class="noscroll-btn-watch">
-          <span class="btn-icon">🎬</span>
+          <span class="btn-icon">${ICONS.tv}</span>
           <span>Watchビューでじっくり見る</span>
         </a>
 
         <!-- 4. もう一度見る (リプレイ) -->
         <button type="button" class="noscroll-btn-replay" id="noscroll-replay-btn">
-          🔄 もう一度この動画を見る
+          <span class="btn-icon-inline">${ICONS.rotateCcw}</span>
+          <span>もう一度この動画を見る</span>
         </button>
       </div>
     `;
@@ -439,14 +453,15 @@
     overlay.innerHTML = `
       <div class="noscroll-modal-card">
         <div class="noscroll-modal-badge">Playback Finished</div>
-        <h2 class="noscroll-modal-title">1本視聴完了！</h2>
+        <h2 class="noscroll-modal-title">1本視聴完了</h2>
         <p class="noscroll-modal-desc">
           動画の再生が終了しました。<br>
           次の動画への無限スワイプは遮断されています。<br>
           ここで一息ついて、自分のやるべきことに戻りましょう。
         </p>
         <div class="noscroll-modal-stats">
-          🧠 ドパミン消費ストップ！集中力を守り抜きました
+          <span class="stats-icon">${ICONS.checkCircle}</span>
+          <span>ドパミン消費ストップ。集中力を守り抜きました</span>
         </div>
         ${getModalActionButtonsHtml(watchUrl)}
       </div>
@@ -510,14 +525,18 @@
         <div class="noscroll-modal-badge" style="background: rgba(255, 59, 48, 0.2); color: #ff3b30; border-color: #ff3b30;">
           Time Limit Exceeded
         </div>
-        <h2 class="noscroll-modal-title">🚨 ドパガキ警報発令！</h2>
+        <h2 class="noscroll-modal-title">
+          <span class="modal-alert-icon">${ICONS.alertTriangle}</span>
+          制限時間到達
+        </h2>
         <p class="noscroll-modal-desc">
           Shortsの制限時間（${currentSettings.timerMinutes}分）が経過しました。<br>
-          これ以上見ても脳が疲れるだけです！<br>
+          これ以上見ても脳が疲れるだけです。<br>
           深呼吸をして、画面を閉じて現実に戻りましょう。
         </p>
         <div class="noscroll-modal-stats">
-          ⏱️ 滞在時間: ${currentSettings.timerMinutes}分達成
+          <span class="stats-icon">${ICONS.clock}</span>
+          <span>滞在時間: ${currentSettings.timerMinutes}分達成</span>
         </div>
         ${getModalActionButtonsHtml(watchUrl)}
       </div>
@@ -539,7 +558,7 @@
 
   // ---------------------------------------------------------
   // ナビゲーション・SPA遷移のハンドリング
-  // ★重要: watchビューでは何もしないクリーンアップ
+  // Note: watchビューでは何もしないクリーンアップ
   // ---------------------------------------------------------
   function handleLocationChange() {
     applyHtmlAttributes(currentSettings);
